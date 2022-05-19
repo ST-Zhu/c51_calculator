@@ -1,0 +1,277 @@
+C51 COMPILER V9.56.0.0   SHIYAN1_1                                                         05/20/2018 21:13:10 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SHIYAN1_1
+OBJECT MODULE PLACED IN shiyan1_1.OBJ
+COMPILER INVOKED BY: D:\Program Files\Keil_v5\C51\BIN\C51.EXE shiyan1_1.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND TA
+                    -BS(2)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          #define uchar unsigned char
+   3          #define uint unsigned int
+   4          sbit RS=P2^0;
+   5          sbit RW=P2^1;
+   6          sbit E=P2^2;
+   7          uchar t,n,a,i;//t读取P3数据；n计数显示正常;a判断运算符号;i计数
+   8          int x,y,z,b,c,q[10];//储存数据
+   9          void delay(uchar x)
+  10          {
+  11   1        uchar f,g;
+  12   1        for(f=x;f>0;f++)
+  13   1          for(g=110;g>0;g--);
+  14   1      }//延迟函数
+  15          void write_command(uchar f)
+  16          {
+  17   1        RS=0;
+  18   1        RW=0;
+  19   1        E=0;
+  20   1        P0=f;
+  21   1        E=1;
+  22   1        delay(5);
+  23   1        E=0;
+  24   1      }//写指令函数
+  25          void write_date(uchar g)
+  26          {
+  27   1        RS=1;
+  28   1        RW=0;
+  29   1        E=0;
+  30   1        P0=g;
+  31   1        E=1;
+  32   1        delay(5);
+  33   1        E=0;
+  34   1      }//写数据函数
+  35          void init()
+  36          {
+  37   1        uchar j;
+  38   1        for(j=0;j<10;j++)
+  39   1          q[j]=10;
+  40   1        i=0;
+  41   1        x=0;
+  42   1        y=0;
+  43   1        z=0;
+  44   1        b=0;
+  45   1        c=0;
+  46   1        a=0;
+  47   1        n=0;
+  48   1        t=0;//初始化数据
+  49   1        write_command(0x38);
+  50   1        write_command(0x0f);
+  51   1        write_command(0x06);
+  52   1        write_command(0x01);
+  53   1        write_command(0x80);//初始化LCD1602
+  54   1      }//初始化函数
+C51 COMPILER V9.56.0.0   SHIYAN1_1                                                         05/20/2018 21:13:10 PAGE 2   
+
+  55          void shaomiao()
+  56          {
+  57   1        P3=0xfe;
+  58   1        t=P3;
+  59   1        if(t!=0xfe)
+  60   1        {
+  61   2          delay(50);//按键消抖
+  62   2          if(t!=0xfe)
+  63   2          {
+  64   3            if(t==0xee) init();
+  65   3            if(t==0xde) {write_date('/');n++;a=1;}
+  66   3            if(t==0xbe) {write_date('*');n++;a=2;}
+  67   3            if(t==0x7e) a=5;
+  68   3          }
+  69   2          while(P3!=0xfe);//松开按键时跳出语句
+  70   2        }//第一排按键扫描
+  71   1        P3=0xfd;
+  72   1        t=P3;
+  73   1        if(t!=0xfd)
+  74   1        {
+  75   2          delay(50);//按键消抖
+  76   2          if(t!=0xfd)
+  77   2          {
+  78   3            if(t==0xed) {write_date('7');n++;x=7;}
+  79   3            if(t==0xdd) {write_date('8');n++;x=8;}
+  80   3            if(t==0xbd) {write_date('9');n++;x=9;}
+  81   3            if(t==0x7d) {write_date('-');n++;a=3;}
+  82   3          }
+  83   2          while(P3!=0xfd);//松开按键时跳出语句
+  84   2        }//第二排按键扫描
+  85   1        P3=0xfb;
+  86   1        t=P3;
+  87   1        if(t!=0xfb)
+  88   1        {
+  89   2          delay(50);//按键消抖
+  90   2          if(t!=0xfb)
+  91   2          {
+  92   3            if(t==0xeb) {write_date('4');n++;x=4;}
+  93   3            if(t==0xdb) {write_date('5');n++;x=5;}
+  94   3            if(t==0xbb) {write_date('6');n++;x=6;}
+  95   3            if(t==0x7b) {write_date('+');n++;a=4;}
+  96   3          }
+  97   2          while(P3!=0xfb);//松开按键时跳出语句
+  98   2        }//第三排按键扫描
+  99   1        P3=0xf7;
+ 100   1        t=P3;
+ 101   1        if(t!=0xf7)
+ 102   1        {
+ 103   2          delay(50);//按键消抖
+ 104   2          if(t!=0xf7)
+ 105   2          {
+ 106   3            if(t==0xe7) {write_date('0');n++;x=0;}
+ 107   3            if(t==0xd7) {write_date('1');n++;x=1;}
+ 108   3            if(t==0xb7) {write_date('2');n++;x=2;}
+ 109   3            if(t==0x77) {write_date('3');n++;x=3;}
+ 110   3          }
+ 111   2          while(P3!=0xf7);//松开按键时跳出语句
+ 112   2        }//第四排按键扫描
+ 113   1        if(n==16) write_command(0x07);//正常显示
+ 114   1        if(a==0) y=y*10+x;//形成一个数
+ 115   1      }//矩阵键盘的扫描
+ 116          void jisuan()
+C51 COMPILER V9.56.0.0   SHIYAN1_1                                                         05/20/2018 21:13:10 PAGE 3   
+
+ 117          {
+ 118   1          while(!a)
+ 119   1            shaomiao();
+ 120   1          if(a==1)
+ 121   1          {
+ 122   2            z=y;
+ 123   2            a=0;
+ 124   2            y=0;
+ 125   2            while(!a)
+ 126   2              shaomiao();
+ 127   2            if(a==5)
+ 128   2            {
+ 129   3              b=y;
+ 130   3              c=z/b;
+ 131   3              if(c==0)
+ 132   3              {
+ 133   4                q[9]=0;
+ 134   4                i=8;
+ 135   4              }
+ 136   3              else
+ 137   3                for(i=9;c>0;i--)
+ 138   3                {
+ 139   4                  q[i]=c%10;
+ 140   4                  c/=10;
+ 141   4                }
+ 142   3              write_command(0x80+0x40);
+ 143   3              for(;i<9;i++)
+ 144   3              {
+ 145   4                write_date(0x30+q[i+1]);
+ 146   4              }
+ 147   3            }
+ 148   2          }
+ 149   1          if(a==2)
+ 150   1          {
+ 151   2            z=y;
+ 152   2            a=0;
+ 153   2            y=0;
+ 154   2            while(!a)
+ 155   2              shaomiao();
+ 156   2            if(a==5)
+ 157   2            {
+ 158   3              b=y;
+ 159   3              c=z*b;
+ 160   3              if(c==0)
+ 161   3              {
+ 162   4                q[9]=0;
+ 163   4                i=8;
+ 164   4              }
+ 165   3              else
+ 166   3                for(i=9;c>0;i--)
+ 167   3                {
+ 168   4                  q[i]=c%10;
+ 169   4                  c/=10;
+ 170   4                }
+ 171   3              write_command(0x80+0x40);
+ 172   3              for(;i<9;i++)
+ 173   3              {
+ 174   4                write_date(0x30+q[i+1]);
+ 175   4              }
+ 176   3            }
+ 177   2          }
+ 178   1          if(a==3)
+C51 COMPILER V9.56.0.0   SHIYAN1_1                                                         05/20/2018 21:13:10 PAGE 4   
+
+ 179   1          {
+ 180   2            z=y;
+ 181   2            a=0;
+ 182   2            y=0;
+ 183   2            while(!a)
+ 184   2              shaomiao();
+ 185   2            if(a==5)
+ 186   2            {
+ 187   3              b=y;
+ 188   3              c=z-b;
+ 189   3              if(c==0)
+ 190   3              {
+ 191   4                q[9]=0;
+ 192   4                i=8;
+ 193   4              }
+ 194   3              else
+ 195   3                for(i=9;c>0;i--)
+ 196   3                {
+ 197   4                  q[i]=c%10;
+ 198   4                  c/=10;
+ 199   4                }
+ 200   3              write_command(0x80+0x40);
+ 201   3              for(;i<9;i++)
+ 202   3              {
+ 203   4                write_date(0x30+q[i+1]);
+ 204   4              }
+ 205   3            }
+ 206   2          }
+ 207   1          if(a==4)
+ 208   1          {
+ 209   2            z=y;
+ 210   2            a=0;
+ 211   2            y=0;
+ 212   2            while(!a)
+ 213   2              shaomiao();
+ 214   2            if(a==5)
+ 215   2            {
+ 216   3              b=y;
+ 217   3              c=z+b;
+ 218   3              if(c==0)
+ 219   3              {
+ 220   4                q[9]=0;
+ 221   4                i=8;
+ 222   4              }
+ 223   3              else
+ 224   3                for(i=9;c>0;i--)
+ 225   3                {
+ 226   4                  q[i]=c%10;
+ 227   4                  c/=10;
+ 228   4                }
+ 229   3              write_command(0x80+0x40);
+ 230   3              for(;i<9;i++)
+ 231   3              {
+ 232   4                write_date(0x30+q[i+1]);
+ 233   4              }
+ 234   3            }
+ 235   2          }
+ 236   1          a=0;
+ 237   1      }//计算数并显示
+ 238          void main()
+ 239          {   
+ 240   1        init();
+C51 COMPILER V9.56.0.0   SHIYAN1_1                                                         05/20/2018 21:13:10 PAGE 5   
+
+ 241   1        while(1)
+ 242   1        {
+ 243   2          jisuan();
+ 244   2        }
+ 245   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1133    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     34    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

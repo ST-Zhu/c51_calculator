@@ -1,0 +1,13 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+D:\A___learn\51\ÊµÑé\shiyan1_1\shiyan1_1.uvproj
+Project File Date:  05/09/2018
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling shiyan1_1.c...
+--- Error: failed to execute 'D:\\C51\BIN\C51.EXE'
+Target not created
